@@ -29,8 +29,15 @@ __all__ = ["InterruptiblePool"]
 
 import signal
 import functools
-from multiprocessing_on_dill.pool import Pool
-from multiprocessing_on_dill import TimeoutError
+try:
+    # attempt to use dill serialization with multiprocess fork of
+    # multiprocessing
+    # https://pypi.python.org/pypi/multiprocess
+    from multiprocess.pool import Pool
+    from multiprocess import TimeoutError
+except ImportError:
+    from multiprocessing.pool import Pool
+    from multiprocessing import TimeoutError
 
 
 def _initializer_wrapper(actual_initializer, *rest):
